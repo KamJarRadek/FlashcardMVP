@@ -1,0 +1,14 @@
+.text-form-container {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 0 15px;
+
+  .full-width {
+    width: 100%;
+  }
+
+  .error-message {
+    color: red;
+    margin-top: 10px;
+  }
+}

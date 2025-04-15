@@ -1,0 +1,12 @@
+<div class="flashcard-list">
+  <div *ngFor="let card of flashcards" class="flashcard">
+    <div class="flashcard-content">
+      <p><strong>Definicja:</strong> {{ card.definition }}</p>
+      <p><strong>Pojęcie:</strong> {{ card.concept }}</p>
+    </div>
+    <div class="flashcard-actions">
+      <button mat-button color="primary" (click)="onAction(card, 'accepted')">Akceptuj</button>
+      <button mat-button color="warn" (click)="onAction(card, 'rejected')">Usuń</button>
+    </div>
+  </div>
+</div>

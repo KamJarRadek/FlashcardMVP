@@ -1,0 +1,22 @@
+.flashcard-list {
+  margin-top: 20px;
+
+  .flashcard {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 15px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .flashcard-content {
+      flex: 1;
+      margin-right: 15px;
+    }
+
+    .flashcard-actions button {
+      margin-right: 5px;
+    }
+  }
+}

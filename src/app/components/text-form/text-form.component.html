@@ -1,0 +1,18 @@
+<div class="text-form-container">
+  <form (ngSubmit)="onSubmit()">
+    <mat-form-field appearance="fill" class="full-width">
+      <textarea matInput placeholder="Wprowadź tekst" [formControl]="textControl" rows="10"></textarea>
+      <mat-hint align="end">{{ textControl.value?.length || 0 }} / {{ maxLength }}</mat-hint>
+      <mat-error *ngIf="textControl.hasError('maxlength')">Przekroczono limit znaków!</mat-error>
+      <mat-error *ngIf="textControl.hasError('required')">To pole jest wymagane!</mat-error>
+    </mat-form-field>
+    <button mat-raised-button color="primary" type="submit" [disabled]="textControl.invalid || isLoading">
+      Generuj fiszki
+    </button>
+  </form>
+  
+  <!-- Wyświetlanie listy fiszek – zaimplementujemy komponent do wyświetlania (FlashcardListComponent) w kolejnym kroku -->
+  <app-flashcard-list [flashcards]="flashcards"></app-flashcard-list>
+  <mat-spinner *ngIf="isLoading"></mat-spinner>
+  <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+</div>
