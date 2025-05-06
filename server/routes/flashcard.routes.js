@@ -1,3 +1,6 @@
+const axios      = require('axios');
+// const cors       = require('cors');
+// const bodyParser = require('body-parser');
 const express = require('express');
 const router = express.Router();
 const { createClient } = require('@supabase/supabase-js');
@@ -103,5 +106,75 @@ router.post('/', async (req, res) => {
     res.status(500).json({ message: 'Wystąpił błąd serwera', error: error.message });
   }
 });
+
+// Endpoint do edycji istniejącej fiszki
+// PUT /api/flashcards/:id
+router.put('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { userId, definition, concept, status, source } = req.body;
+
+    // Minimum: musimy wiedzieć, który user i który rekord edytujemy
+    if (!userId) {
+      return res.status(400).json({ message: 'Brakujące dane: userId' });
+    }
+    // Sprawdźmy, czy przynajmniej jedno pole do aktualizacji zostało przekazane
+    const updates = {};
+    if (definition   !== undefined) updates.definition = definition;
+    if (concept      !== undefined) updates.concept    = concept;
+    if (status       !== undefined) updates.status     = status;
+    if (source       !== undefined) updates.source     = source;
+
+    if (Object.keys(updates).length === 0) {
+      return res.status(400).json({ message: 'Brak pól do aktualizacji' });
+    }
+
+    // Wykonaj aktualizację w bazie
+    const { data, error } = await supabase
+      .from('flashcards')
+      .update(updates)
+      .eq('id', id)
+      .eq('user_id', userId)      // dodatkowe zabezpieczenie: user może edytować tylko swoje fiszki
+      .select();
+
+    if (error) {
+      console.error('Błąd podczas aktualizacji fiszki:', error);
+      return res.status(500).json({ message: 'Błąd bazy danych', error: error.message });
+    }
+
+    if (!data || data.length === 0) {
+      // albo nie istnieje fiszka o podanym id, albo nie należy do usera
+      return res.status(404).json({ message: 'Nie znaleziono fiszki do aktualizacji' });
+    }
+
+    // Zwracamy zaktualizowany rekord
+    res.status(200).json({ flashcard: data[0] });
+
+  } catch (error) {
+    console.error('Błąd serwera podczas aktualizacji fiszki:', error);
+    res.status(500).json({ message: 'Wystąpił błąd serwera', error: error.message });
+  }
+});
+
+
+router.post('/generate-proposals-test', async (req, res) => {
+  const text = req.body.text; // maks. 10 000 znaków
+  try {
+    const response = await axios.post(
+      'http://host.docker.internal:11434/v1/completions',
+      {
+        model: 'tinyllama:1.1b',
+        prompt: `Z tekstu poniżej wygeneruj maksymalnie 20 fiszek w formacie JSON:\n\n${text}`,
+        max_tokens: 512
+      },
+      { headers: { 'Content-Type': 'application/json' } }
+    );
+    res.json(response.data.choices[0].text);
+  } catch (err) {
+    console.error('Błąd kommunacji z Ollama:', err.message);
+    res.status(500).json({ error: 'Błąd komunikacji z Ollama' });
+  }
+});
+
 
 module.exports = router;

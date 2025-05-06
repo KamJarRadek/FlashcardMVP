@@ -1,7 +1,8 @@
 import { Routes } from '@angular/router';
-import {FlashcardsPageComponent} from "./components/flashcards-page/flashcards-page.component";
+import {ProposalListComponent} from "./components/proposal-list/proposal-list.component";
 
 export const routes: Routes = [
-  { path: 'flashcards', component: FlashcardsPageComponent },
-  { path: '', redirectTo: '/flashcards', pathMatch: 'full' }
+  { path: 'flashcards', component: ProposalListComponent },
+  { path: '', component: ProposalListComponent },
+  { path: '**', redirectTo: '' }
 ];

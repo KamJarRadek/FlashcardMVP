@@ -1,16 +1,19 @@
 const express = require('express');
 const path = require('path');
+const cors = require('cors');
 const rateLimit = require('express-rate-limit');
 require('dotenv').config();
 
 // Import konfiguracji bazy danych
-const { testConnection } = require('./server/config/database');
+testConnection = require('./server/config/database').testConnection;
+// Import routerów API
+const flashcardRoutes = require('./server/routes/flashcard.routes');
 
-// Inicjalizacja Express
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Konfiguracja limitera zapytań
+testConnection;
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minut
   max: 100, // limit każdego IP do 100 zapytań na "okno"
@@ -19,42 +22,45 @@ const apiLimiter = rateLimit({
 });
 
 // Middleware
+env: cors({
+  origin: process.env.CORS_ORIGIN || 'http://localhost:4200',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+});
+app.use(cors({
+  origin: process.env.CORS_ORIGIN || 'http://localhost:4200',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}));
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-// Zastosuj limit zapytań do wszystkich endpointów API
+app.use(express.urlencoded({extended: true}));
 app.use('/api', apiLimiter);
 
-// Import routerów API
-const flashcardRouter = require('./server/routes/flashcard.routes');
+// Statyczne pliki (produkcyjne i deweloperskie)
+app.use(express.static(path.join(__dirname, 'dist/flashcard-mvp')));
 
-// Użycie routerów
-app.use('/api/flashcards', flashcardRouter);
+// Endpointy API
+app.use('/api/flashcards', flashcardRoutes);
 
-// Dodanie endpointu do sprawdzania statusu
+// Endpoint statusu serwera
 app.get('/api/health', (req, res) => {
-  res.status(200).json({ status: 'ok', message: 'Serwer działa poprawnie' });
+  res.status(200).json({status: 'ok', message: 'Serwer działa poprawnie'});
 });
 
-// Serwowanie plików statycznych w produkcji
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, 'dist/flashcard-mvp')));
+// Wszystkie pozostałe zapytania obsługuje aplikacja Angular
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'dist/flashcard-mvp', 'index.html'));
+});
 
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'dist/flashcard-mvp', 'index.html'));
-  });
-}
-
-// Obsługa błędów
+// Obsługa błędów auth Handler
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).send({ message: 'Wystąpił błąd na serwerze', error: err.message });
+  res.status(500).json({message: 'Wystąpił błąd na serwerze', error: err.message});
 });
 
-// Uruchomienie serwera
+// Uruchomienie serwera po weryfikacji połączenia z bazą danych
 async function startServer() {
   try {
-    // Testowanie połączenia z bazą danych przed uruchomieniem serwera
     const connectionSuccess = await testConnection();
 
     if (!connectionSuccess) {
@@ -74,3 +80,4 @@ async function startServer() {
 }
 
 startServer();
+

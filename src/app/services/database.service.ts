@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { from, Observable } from 'rxjs';
 import { createClient } from '@supabase/supabase-js';
-import { environment } from '../environments/environment';
-
+import { environment } from '../../environments/environment';
 export interface FlashcardAction {
   definition: string;
   concept: string;
@@ -14,7 +13,7 @@ export interface FlashcardAction {
   providedIn: 'root'
 })
 export class DatabaseService {
-  private supabase = createClient(environment.supabaseUrl!, environment.supabaseKey!);
+  private supabase = createClient(environment.supabaseUrl!, environment.supabaseAnonKey!);
 
   saveFlashcardAction(data: FlashcardAction): Observable<any> {
     // Wstaw rekord do tabeli "flashcard_actions" w Supabase

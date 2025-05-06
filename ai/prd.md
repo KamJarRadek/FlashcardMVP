@@ -15,12 +15,14 @@ Użytkownicy chcą korzystać z efektywnej metody nauki, jaką jest spaced repet
 3. Wygenerowane fiszki są prezentowane użytkownikowi z opcjami: „akceptuj” oraz „usuń”. Po zaakceptowaniu fiszka trafia do listy umożliwiającej edycję.
 4. Użytkownik ma możliwość tworzenia fiszek ręcznie, których treść przechowywana jest identycznie jak fiszek generowanych automatycznie.
 5. Wszystkie fiszki są przechowywane bez dodatkowych metadanych (poza informacjami dotyczącymi źródła i statusu akceptacji).
-6. Implementacja systemu autoryzacji opiera się na logowaniu przy użyciu e-maila, hasła oraz mechanizmu OAuth. Funkcja resetu hasła nie jest wdrażana w MVP.
+6. Implementacja systemu autoryzacji opiera się na logowaniu przy użyciu e-maila, hasła oraz mechanizmu OAuth. Funkcja resetu hasła (recover + reset z linkiem) jest częścią MVP, w pełni obsługiwana przez Supabase.
 7. Tryb nauki umożliwia losowe (sekwencyjne) wyświetlanie fiszek, bez implementacji zaawansowanego algorytmu powtórek.
 8. Aplikacja ma być zbudowana głównie po stronie front-endu, z back-endem wykorzystującym hostowaną bazę danych oraz konsolę uruchomieniową.
 9. System zapisuje logi generacji fiszek w bazie danych w celu monitorowania operacji.
 10. System zbiera informacje o pochodzeniu fiszek (czy zostały wygenerowane przez AI, czy utworzone ręcznie) oraz statusie ich akceptacji (zaakceptowane vs. odrzucone) w celu tworzenia wykresów statystyk.
 11. Testowanie MVP obejmuje manualne testy użytkownika oraz testy jednostkowe napisane przez deweloperów.
+12. Rejestrację konta (email, hasło) z weryfikacją email.
+13. Mechanizm resetu/odzyskiwania hasła.
 
 ## 4. Granice produktu
 Produkt w swoim MVP nie obejmuje:
@@ -70,9 +72,9 @@ Tytuł: Logowanie i autoryzacja użytkownika
 Opis: Użytkownik uzyskuje dostęp do aplikacji poprzez logowanie za pomocą e-maila i hasła lub OAuth.  
 Kryteria akceptacji:
 - Ekran logowania umożliwia wpisanie e-maila i hasła.
-- Umożliwione jest logowanie za pomocą mechanizmu OAuth.
+- Umożliwione jest logowanie za pomocą mechanizmu Supabase.
 - System poprawnie autoryzuje użytkownika i udziela dostępu do jego konta.
-- Brak opcji resetu hasła w MVP.
+- W przypadku błędnych danych logowania, użytkownik otrzymuje odpowiedni komunikat.
 
 ### US-006
 Tytuł: Tryb nauki – losowe wyświetlanie fiszek  
@@ -97,6 +99,20 @@ Kryteria akceptacji:
 - Na interfejsie dostępna jest opcja wyświetlenia statystyk.
 - Statystyki zawierają dane o liczbie fiszek według źródła (AI vs. ręczne) oraz statusu (zaakceptowane vs. odrzucone).
 - Wykresy prezentowane są w sposób czytelny i aktualizowane przy każdej zmianie danych.
+
+### US-009
+Tytuł: Rejestracja konta użytkownika
+Opis: Użytkownik może zarejestrować się w systemie, podając e-mail i hasło.
+Kryteria akceptacji:
+- Użytkownik wprowadza e-mail i hasło w formularzu rejestracyjnym.
+- System weryfikuje poprawność e-maila i hasła (np. długość, złożoność).
+
+### US-010
+Tytuł: Resetowanie hasła
+Opis: Użytkownik ma możliwość zresetowania hasła w przypadku jego zapomnienia.
+Kryteria akceptacji:
+- Użytkownik klika w link „Zapomniałem hasła” na ekranie logowania.
+- System wysyła e-mail z linkiem do resetowania hasła.
 
 ## 6. Metryki sukcesu
 1. 75% fiszek wygenerowanych przez AI musi być zaakceptowanych przez użytkownika. Monitorowane jest to na podstawie stosunku liczby zaakceptowanych fiszek do liczby wygenerowanych.

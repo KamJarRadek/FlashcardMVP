@@ -25,3 +25,5 @@
 - Leverage the Angular Material theming system for consistent branding
 - Implement proper typography hierarchy using the Material typography system
 - Use Angular Material's built-in a11y features like focus indicators and keyboard navigation
+- Implementację Route Guards (np. AuthGuard) wykorzystującego Supabase client do sprawdzania stanu sesji.
+- Rozszerzyć AuthInterceptor o przekierowanie na /login w przypadku braku/wygaśnięcia tokena. 

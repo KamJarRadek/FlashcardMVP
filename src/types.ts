@@ -121,3 +121,17 @@ export interface AuthResponseDto {
   accessToken: string;
   user: UserDto;
 }
+
+export interface SignUpParams {
+  email: string;
+  password: string
+}
+
+export interface RecoverParams {
+  email: string
+}
+
+export interface ResetParams {
+  token: string;
+  newPassword: string
+}

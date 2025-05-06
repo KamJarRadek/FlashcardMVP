@@ -1,21 +1,21 @@
-
-import { RouterOutlet } from '@angular/router';
+import {RouterOutlet} from '@angular/router';
 import {TextFormComponent} from "./components/text-form/text-form.component";
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http';
-import { SupabaseService } from './services/supabase.service';
+import {Component, OnInit} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {HttpClientModule} from '@angular/common/http';
+import {SupabaseService} from './services/supabase.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, HttpClientModule,RouterOutlet, TextFormComponent],
+  imports: [CommonModule, RouterOutlet, HttpClientModule, RouterOutlet, TextFormComponent],
   providers: [SupabaseService],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
 export class AppComponent implements OnInit {
-  constructor(private supabaseService: SupabaseService) {}
+  constructor(private supabaseService: SupabaseService) {
+  }
 
   ngOnInit() {
     // Przykład jak można wykorzystać serwis Supabase
@@ -33,5 +33,6 @@ export class AppComponent implements OnInit {
       });
 
   }
+
   title = 'flashcard-mvp';
 }

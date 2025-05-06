@@ -1,7 +1,7 @@
-import { Injectable, inject } from '@angular/core';
-import { supabaseClient } from '../../db/supabase.client';
-import type { Database } from '../../db/database.types';
-import { SupabaseClient } from '@supabase/supabase-js';
+import {Injectable} from '@angular/core';
+import {supabaseClient} from '../../db/supabase.client';
+import type {Database} from '../../db/database.types';
+import {SupabaseClient} from '@supabase/supabase-js';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +16,6 @@ export class SupabaseService {
   // Metoda pomocnicza do pobierania fiszek użytkownika
   async getFlashcardsByUserId(userId: string) {
     return this.supabase
-      // .from('flashcard_actions')
       .from('flashcards')
       .select('*')
       .eq('user_id', userId);
@@ -25,7 +24,6 @@ export class SupabaseService {
   // Metoda do dodawania nowej fiszki
   async addFlashcard(flashcardData: Database['public']['Tables']['flashcards']['Insert']) {
     return this.supabase
-      // .from('flashcard_actions')
       .from('flashcards')
       .insert(flashcardData);
   }
@@ -37,8 +35,7 @@ export class SupabaseService {
     // updates: Database['public']['Tables']['flashcards']['Update']
   ) {
     return this.supabase
-      .from('flashcard_actions')
-      // .from('flashcards')
+      .from('flashcards')
       .update(updates)
       .eq('id', id);
   }
@@ -46,8 +43,7 @@ export class SupabaseService {
   // Metoda do usuwania fiszki
   async deleteFlashcard(id: string) {
     return this.supabase
-      .from('flashcard_actions')
-      // .from('flashcards')
+      .from('flashcards')
       .delete()
       .eq('id', id);
   }

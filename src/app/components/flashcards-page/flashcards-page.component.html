@@ -1,5 +1,11 @@
 <h1>Flashcards</h1>
-<app-flashcard
-  question="Czym jest React?"
-  answer="React to biblioteka JavaScript do budowy interfejsów użytkownika.">
-</app-flashcard>
+<ul>
+  @for (card of cards(); track card.id) {
+    <li>
+      <app-flashcard
+        [question]="card.concept"
+        [answer]="card.definition">
+      </app-flashcard>
+    </li>
+  }
+</ul>

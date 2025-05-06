@@ -1,0 +1,10 @@
+<div class="action-bar">
+  <button mat-raised-button color="accent" (click)="addFlashcard()">Dodaj Flashcard</button>
+</div>
+<div class="proposal-container">
+  @for (card of cards() ; track card.id) {
+    <app-flashcard-proposal-card [card]="card"></app-flashcard-proposal-card>
+  } @empty {
+    <div class="no-flashcards">Brak dostępnych flashcardów. Dodaj swój pierwszy!</div>
+  }
+</div>

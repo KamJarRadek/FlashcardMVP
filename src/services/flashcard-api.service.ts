@@ -1,21 +1,19 @@
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { HttpService } from './http.service';
-import {
-  Flashcard,
-  FlashcardProposalDto,
-  GenerateFlashcardProposalsCommand
-} from '../models/flashcard.dto';
-import { ApiResponseType, PaginatedResponse } from '../models/api-response.model';
+import {Injectable} from '@angular/core';
+import {Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
+import {HttpService} from './http.service';
+import {ApiResponseType, PaginatedResponse} from '../models/api-response.model';
+import {FlashCardModel} from "../app/components/model/flash-card.model";
+import {FlashcardProposalDto, GenerateFlashcardProposalsCommand} from "../models/flashcard.dto";
 
 @Injectable({
   providedIn: 'root'
 })
-export class FlashcardApiService {
-  private baseEndpoint = 'flashcards';
+export class FlashCardModelApiService {
+  private baseEndpoint = 'FlashCardModels';
 
-  constructor(private httpService: HttpService) {}
+  constructor(private httpService: HttpService) {
+  }
 
   /**
    * Pobiera fiszki użytkownika
@@ -23,10 +21,10 @@ export class FlashcardApiService {
    * @param limit Limit wyników (domyślnie 100)
    * @param offset Przesunięcie wyników (domyślnie 0)
    */
-  getUserFlashcards(userId: string, limit = 100, offset = 0): Observable<PaginatedResponse<Flashcard>> {
-    return this.httpService.get<PaginatedResponse<Flashcard>>(
+  getUserFlashCardModels(userId: string, limit = 100, offset = 0): Observable<PaginatedResponse<FlashCardModel>> {
+    return this.httpService.get<PaginatedResponse<FlashCardModel>>(
       `${this.baseEndpoint}/user/${userId}`,
-      { limit, offset }
+      {limit, offset}
     );
   }
 
@@ -34,12 +32,12 @@ export class FlashcardApiService {
    * Pobiera pojedynczą fiszkę po ID
    * @param id ID fiszki
    */
-  getFlashcard(id: string): Observable<Flashcard> {
-    return this.httpService.get<ApiResponseType<Flashcard>>(`${this.baseEndpoint}/${id}`)
+  getFlashCardModel(id: string): Observable<FlashCardModel> {
+    return this.httpService.get<ApiResponseType<FlashCardModel>>(`${this.baseEndpoint}/${id}`)
       .pipe(
         map((response: any) => {
           if (response.status === 'success') {
-            return response.flashcard;
+            return response.FlashCardModel;
           }
           throw new Error(response.message || 'Nie udało się pobrać fiszki');
         })
@@ -48,14 +46,14 @@ export class FlashcardApiService {
 
   /**
    * Tworzy nową fiszkę
-   * @param flashcard Dane fiszki
+   * @param FlashCardModel Dane fiszki
    */
-  createFlashcard(flashcard: Partial<Flashcard>): Observable<Flashcard> {
-    return this.httpService.post<ApiResponseType<Flashcard>>(this.baseEndpoint, flashcard)
+  createFlashCardModel(FlashCardModel: Partial<FlashCardModel>): Observable<FlashCardModel> {
+    return this.httpService.post<ApiResponseType<FlashCardModel>>(this.baseEndpoint, FlashCardModel)
       .pipe(
         map((response: any) => {
           if (response.status === 'success') {
-            return response.flashcard;
+            return response.FlashCardModel;
           }
           throw new Error(response.message || 'Nie udało się utworzyć fiszki');
         })
@@ -65,14 +63,14 @@ export class FlashcardApiService {
   /**
    * Aktualizuje fiszkę
    * @param id ID fiszki
-   * @param flashcard Dane do aktualizacji
+   * @param FlashCardModel Dane do aktualizacji
    */
-  updateFlashcard(id: string, flashcard: Partial<Flashcard>): Observable<Flashcard> {
-    return this.httpService.put<ApiResponseType<Flashcard>>(`${this.baseEndpoint}/${id}`, flashcard)
+  updateFlashCardModel(id: string, FlashCardModel: Partial<FlashCardModel>): Observable<FlashCardModel> {
+    return this.httpService.put<ApiResponseType<FlashCardModel>>(`${this.baseEndpoint}/${id}`, FlashCardModel)
       .pipe(
         map((response: any) => {
           if (response.status === 'success') {
-            return response.flashcard;
+            return response.FlashCardModel;
           }
           throw new Error(response.message || 'Nie udało się zaktualizować fiszki');
         })
@@ -83,7 +81,7 @@ export class FlashcardApiService {
    * Usuwa fiszkę
    * @param id ID fiszki
    */
-  deleteFlashcard(id: string): Observable<void> {
+  deleteFlashCardModel(id: string): Observable<void> {
     return this.httpService.delete<ApiResponseType<void>>(`${this.baseEndpoint}/${id}`)
       .pipe(
         map((response: any) => {

@@ -210,6 +210,101 @@
   - `401 Unauthorized`
 
 ### Authentication
+**Przygotowanie wpisów do plików**
+
+Chciałbym przygotować konkretne wpisy do plików `api-plan.md` i `ui-plan.md`, tak aby użytkownik mógł je łatwo edytować. Potrzebuję teraz stworzyć fragmenty kodu lub treści w formacie Markdown, które użytkownik będzie mógł skopiować i wkleić. Aby zrobić to dobrze, sprawdzę strukturę tych plików, aby dopasować nowe sekcje do istniejącego kontekstu. Takie podejście zapewni, że wszystko będzie spójne i gotowe do edycji.
+
+
+Myślał przez 8 s
+
+
+Poniżej znajdziesz gotowe fragmenty do wklejenia i ręcznej edycji.
+
+---
+
+**Wstaw do `api-plan.md`** (po sekcji **OAuth** w rozdziale “### Authentication” oraz rozbuduj “## 3. Authentication and Authorization”):
+
+````markdown
+### Authentication (rozszerzenie)
+
+#### Signup (Rejestracja)
+- **Method:** POST  
+- **URL:** `/auth/signup`  
+- **Description:** Utworzenie nowego konta użytkownika. Po rejestracji wysyłany jest e-mail potwierdzający.  
+- **Request Body:**
+  ```json
+  {
+    "email": "string",
+    "password": "string"
+  }
+````
+
+* **Response Body:**
+
+  ```json
+  {
+    "user": {
+      "id": "uuid",
+      "email": "string",
+      "confirmed_at": "timestamp | null"
+    }
+  }
+  ```
+* **Success:** `200 OK`
+* **Errors:**
+
+  * `400 Bad Request` — niepoprawny email/hasło
+  * `409 Conflict` — email już zarejestrowany
+
+#### Recover Password (Reset – krok 1)
+
+* **Method:** POST
+* **URL:** `/auth/recover`
+* **Description:** Wysłanie linku resetującego hasło na podany e-mail.
+* **Request Body:**
+
+  ```json
+  {
+    "email": "string"
+  }
+  ```
+* **Response Body:**
+
+  ```json
+  {
+    "message": "Password reset link sent"
+  }
+  ```
+* **Success:** `200 OK`
+* **Errors:**
+
+  * `400 Bad Request` — niepoprawny email
+
+#### Reset Password (Reset – krok 2)
+
+* **Method:** POST
+* **URL:** `/auth/reset`
+* **Description:** Ustawienie nowego hasła przy użyciu tokena z linku.
+* **Request Body:**
+
+  ```json
+  {
+    "token": "string",
+    "newPassword": "string"
+  }
+  ```
+* **Response Body:**
+
+  ```json
+  {
+    "message": "Password has been reset"
+  }
+  ```
+* **Success:** `200 OK`
+* **Errors:**
+
+  * `400 Bad Request` — niepoprawny/void token, słabe hasło
+  * `401 Unauthorized` — token wygasł lub jest nieaktualny
 
 #### Login
 - **Method:** `POST`
@@ -258,10 +353,10 @@
 
 ## 3. Authentication and Authorization
 - **Mechanism:** Supabase Auth with JWT tokens
-- **Protected Endpoints:** All `/flashcards/*`, `/stats`, `/flashcards/generate`, `/flashcards/study`
-- **Authorization:**
-  - JWT claim `user_id` mapped to `flashcards.user_id` via PostgreSQL Row Level Security
-- **Password Reset:** Not implemented in MVP
+- **Protected Endpoints:**  Wszystkie zasoby poza:`/auth/login`, `/auth/oauth`,`/auth/signup`, `/auth/recover`, `/auth/resetAll`
+- **Authorization:**  JWT claim `user_id` mapped to `flashcards.user_id` via PostgreSQL Row Level Security
+- **Password Reset:** Pełny flow resetu hasła (kroki Recover i Reset powyżej)
+- **Row Level Security:** Supabase RLS zapewnia, że użytkownik widzi tylko swoje dane api-plan
 
 ## 4. Validation and Business Logic
 - **Text Generation Input:**
