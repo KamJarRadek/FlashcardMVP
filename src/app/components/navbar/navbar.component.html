@@ -1,0 +1,14 @@
+<mat-toolbar color="primary">
+  <span>Aplikacja do nauki z fiszkami</span>
+  <span class="spacer"></span>
+
+  <ng-container *ngIf="isLoggedIn; else loginButtons">
+    <a mat-button routerLink="/">Fiszki</a>
+    <button mat-button (click)="logout()">Wyloguj</button>
+  </ng-container>
+
+  <ng-template #loginButtons>
+    <a mat-button routerLink="/login">Zaloguj</a>
+    <a mat-button routerLink="/register">Zarejestruj</a>
+  </ng-template>
+</mat-toolbar>

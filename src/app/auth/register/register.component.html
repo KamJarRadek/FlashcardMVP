@@ -1,0 +1,58 @@
+<div class="register-container">
+  <h2>Rejestracja</h2>
+  <p class="subtitle">Utwórz nowe konto</p>
+
+  <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="register-form">
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>Adres e-mail</mat-label>
+      <input matInput formControlName="email" type="email" placeholder="np. jan.kowalski@example.com">
+      <mat-error *ngIf="registerForm.get('email')?.hasError('required')">Email jest wymagany</mat-error>
+      <mat-error *ngIf="registerForm.get('email')?.hasError('email')">Podaj prawidłowy adres email</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>Nazwa użytkownika</mat-label>
+      <input matInput formControlName="username" placeholder="np. jan_kowalski">
+      <mat-error *ngIf="registerForm.get('username')?.hasError('required')">Nazwa użytkownika jest wymagana</mat-error>
+      <mat-error *ngIf="registerForm.get('username')?.hasError('minlength')">Nazwa użytkownika musi mieć co najmniej 3 znaki</mat-error>
+      <mat-error *ngIf="registerForm.get('username')?.hasError('pattern')">Nazwa użytkownika może zawierać tylko litery, cyfry, podkreślenia i myślniki</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>Hasło</mat-label>
+      <input matInput formControlName="password" [type]="hidePassword ? 'password' : 'text'" placeholder="Utwórz hasło">
+      <button type="button" mat-icon-button matSuffix (click)="hidePassword = !hidePassword">
+        <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+      </button>
+      <mat-error *ngIf="registerForm.get('password')?.hasError('required')">Hasło jest wymagane</mat-error>
+      <mat-error *ngIf="registerForm.get('password')?.hasError('minlength')">Hasło musi mieć co najmniej 8 znaków</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>Powtórz hasło</mat-label>
+      <input matInput formControlName="confirmPassword" [type]="hideConfirmPassword ? 'password' : 'text'" placeholder="Potwierdź hasło">
+      <button type="button" mat-icon-button matSuffix (click)="hideConfirmPassword = !hideConfirmPassword">
+        <mat-icon>{{hideConfirmPassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+      </button>
+      <mat-error *ngIf="registerForm.get('confirmPassword')?.hasError('required')">Potwierdzenie hasła jest wymagane</mat-error>
+      <mat-error *ngIf="registerForm.get('confirmPassword')?.hasError('passwordMismatch')">Hasła nie są identyczne</mat-error>
+    </mat-form-field>
+
+    <div class="terms-container">
+      <mat-checkbox formControlName="termsAccepted" color="primary">
+        Akceptuję <a href="#" target="_blank">regulamin</a> i <a href="#" target="_blank">politykę prywatności</a>
+      </mat-checkbox>
+      <mat-error *ngIf="registerForm.get('termsAccepted')?.invalid && registerForm.get('termsAccepted')?.touched" class="terms-error">
+        Musisz zaakceptować regulamin i politykę prywatności
+      </mat-error>
+    </div>
+
+    <button type="submit" mat-raised-button color="primary" class="submit-button" [disabled]="registerForm.invalid">
+      Zarejestruj się
+    </button>
+
+    <div class="login-link">
+      Masz już konto? <a routerLink="/auth/login">Zaloguj się</a>
+    </div>
+  </form>
+</div>

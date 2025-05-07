@@ -1,0 +1,35 @@
+<div class="login-container">
+  <h2>Logowanie</h2>
+  <p class="subtitle">Zaloguj się do swojego konta</p>
+
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>Adres e-mail</mat-label>
+      <input matInput formControlName="email" type="email" placeholder="np. jan.kowalski@example.com">
+      <mat-error *ngIf="loginForm.get('email')?.hasError('required')">Email jest wymagany</mat-error>
+      <mat-error *ngIf="loginForm.get('email')?.hasError('email')">Podaj prawidłowy adres email</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>Hasło</mat-label>
+      <input matInput formControlName="password" [type]="hidePassword ? 'password' : 'text'" placeholder="Wpisz swoje hasło">
+      <button type="button" mat-icon-button matSuffix (click)="hidePassword = !hidePassword">
+        <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+      </button>
+      <mat-error *ngIf="loginForm.get('password')?.hasError('required')">Hasło jest wymagane</mat-error>
+      <mat-error *ngIf="loginForm.get('password')?.hasError('minlength')">Hasło musi mieć co najmniej 8 znaków</mat-error>
+    </mat-form-field>
+
+    <div class="forgot-password">
+      <a routerLink="/forgot-password">Nie pamiętasz hasła?</a>
+    </div>
+
+    <button type="submit" mat-raised-button color="primary" class="submit-button" [disabled]="loginForm.invalid">
+      Zaloguj się
+    </button>
+
+    <div class="register-link">
+      Nie masz konta? <a routerLink="/register">Zarejestruj się</a>
+    </div>
+  </form>
+</div>

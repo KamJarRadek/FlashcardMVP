@@ -1,38 +1,60 @@
-import {RouterOutlet} from '@angular/router';
-import {TextFormComponent} from "./components/text-form/text-form.component";
-import {Component, OnInit} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {HttpClientModule} from '@angular/common/http';
-import {SupabaseService} from './services/supabase.service';
+import { RouterOutlet } from '@angular/router';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { HttpClientModule } from '@angular/common/http';
+import { NavbarComponent } from './components/navbar/navbar.component';
+import { AuthService } from './services/auth.service';
+import { SupabaseService } from './services/supabase.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, HttpClientModule, RouterOutlet, TextFormComponent],
+  imports: [CommonModule, RouterOutlet, HttpClientModule, NavbarComponent],
   providers: [SupabaseService],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
-export class AppComponent implements OnInit {
-  constructor(private supabaseService: SupabaseService) {
-  }
+export class AppComponent implements OnInit, OnDestroy {
+  title = 'Aplikacja do nauki z fiszkami';
+  isLoggedIn = false;
+  isLoading = true;
+  private authSubscription: Subscription | null = null;
+  private loadingSubscription: Subscription | null = null;
+
+  constructor(
+    private authService: AuthService
+  ) {}
 
   ngOnInit() {
-    // Przykład jak można wykorzystać serwis Supabase
-    // Zakładając, że użytkownik jest zalogowany i mamy jego ID
+    // Ustaw nasłuchiwanie na zmiany autentykacji z Supabase
+    // Musi być wywołane przed sprawdzeniem stanu logowania
+    this.authService.setupAuthListener();
 
-    const userId = '0709491b-c441-4924-bcf5-892a26bb998e';
+    // Subskrybuj zmiany stanu logowania
+    this.authSubscription = this.authService.isAuthenticated$.subscribe(isAuthenticated => {
+      this.isLoggedIn = isAuthenticated;
 
-    this.supabaseService.getFlashcardsByUserId(userId)
-      .then(response => {
-        if (response.error) {
-          console.error('Błąd podczas pobierania fiszek:', response.error);
-        } else {
-          console.log('Pobrane fiszki:', response.data);
-        }
-      });
+      if (isAuthenticated) {
+        const userId = this.authService.getCurrentUserId();
+        console.log('Zalogowany użytkownik:', userId);
+      }
+    });
 
+    // Subskrybuj stan ładowania
+    this.loadingSubscription = this.authService.isLoading$.subscribe(isLoading => {
+      this.isLoading = isLoading;
+    });
   }
 
-  title = 'flashcard-mvp';
+  ngOnDestroy() {
+    // Wyczyść subskrypcje przy zniszczeniu komponentu
+    if (this.authSubscription) {
+      this.authSubscription.unsubscribe();
+    }
+
+    if (this.loadingSubscription) {
+      this.loadingSubscription.unsubscribe();
+    }
+  }
 }

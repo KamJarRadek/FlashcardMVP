@@ -7,3 +7,41 @@ h1 {
   text-align: center;
   margin-bottom: 30px;
 }
+.main {
+  padding: 16px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.container {
+  margin-bottom: 24px;
+}
+
+.content {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 24px;
+}
+
+/* Style dla całej aplikacji */
+body {
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f5f5f5;
+}
+
+/* Zmienne kolorów aplikacji */
+:root {
+  --primary-color: #3f51b5;
+  --primary-light: #757de8;
+  --primary-dark: #002984;
+  --accent-color: #ff4081;
+  --text-color: rgba(0, 0, 0, 0.87);
+  --background-color: #f5f5f5;
+  --card-color: #ffffff;
+  --error-color: #f44336;
+  --success-color: #4caf50;
+  --warning-color: #ff9800;
+}
