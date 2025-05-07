@@ -6,6 +6,7 @@ import {NotificationService} from '../../../services/notification.service';
 import {CommonModule} from '@angular/common';
 import {MatButtonModule} from '@angular/material/button';
 import {FlashcardProposalCardComponent} from '../flashcard-proposal-card/flashcard-proposal-card.component';
+import {AuthService} from "../../services/auth.service";
 
 @Component({
   selector: 'app-proposal-list',
@@ -17,6 +18,7 @@ import {FlashcardProposalCardComponent} from '../flashcard-proposal-card/flashca
 })
 export class ProposalListComponent implements OnInit {
   private readonly flashcardsService = inject(FlashcardsService);
+  private readonly authService = inject(AuthService);
   private readonly dialog = inject(MatDialog);
   private readonly notificationService = inject(NotificationService);
   cards = this.flashcardsService.flashcards;
@@ -37,8 +39,8 @@ export class ProposalListComponent implements OnInit {
     dialogRef.afterClosed().subscribe((result: Partial<Flashcard> | undefined) => {
       if (result) {
         const requiredObjectType = {
-          id: 1234567890,
-          user_id: "0709491b-c441-4924-bcf5-892a26bb998e",
+          id: 1,
+          user_id: this.authService.getCurrentUser()?.id,
           concept: result.front || '',
           definition: result.back || '',
           status: "accepted",
