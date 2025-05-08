@@ -61,4 +61,8 @@ export class LoginComponent {
       this.loginForm.markAllAsTouched();
     }
   }
+
+  togglePasswordVisibility(): void {
+    this.hidePassword = !this.hidePassword;
+  }
 }
