@@ -36,5 +36,17 @@ Procesy build, test i deploy są automatyzowane za pomocą GitHub Actions, co po
 
 ---
 
+## Testing
+**Unit Testing**: Jest, Angular Testing Library  
+**Integration Testing**: Postman/Newman, REST-assured  
+**E2E Testing**: Cypress  
+**Security Testing**: OWASP ZAP  
+**Accessibility Testing**: axe-core, Lighthouse  
+
+**Opis:**  
+Testy jednostkowe i integracyjne zapewniają poprawność działania poszczególnych modułów, podczas gdy testy E2E weryfikują kompletne ścieżki użytkownika. Testy bezpieczeństwa i dostępności gwarantują zgodność z najlepszymi praktykami w zakresie ochrony danych i UX. Wszystkie testy są zintegrowane z CI/CD za pomocą GitHub Actions.
+
+---
+
 ## Podsumowanie
 Wybrany tech stack pozwala na szybkie i ekonomiczne rozpoczęcie prac nad MVP. Wykorzystanie darmowych narzędzi i otwartych rozwiązań, takich jak lokalna instancja Ollamama w Dockerze, Supabase, Angular oraz GitHub Actions, gwarantuje pełną funkcjonalność przy zerowych kosztach na etapie developmentu.

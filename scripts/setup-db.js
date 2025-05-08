@@ -187,7 +187,7 @@ async function checkDatabaseConnection() {
   try {
     console.log('Sprawdzanie połączenia z bazą danych Supabase...');
 
-    const { data, error } = await supabase.from('_dummy_query').select('*').limit(1);
+    const { data, error } = await supabase.from('generation_logs').select('*').limit(1);
 
     if (error && error.code !== 'PGRST301') {
       console.error('Błąd podczas testowania połączenia z bazą danych:', error);

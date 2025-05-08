@@ -7,10 +7,17 @@
     "server": "node server.js",
     "dev": "concurrently \"npm run server\" \"npm run start\"",
     "build": "ng build",
-    "setup-db": "node scripts/setup-db.js",
-    "postinstall": "npm run setup-db",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test:karma": "ng test",
+    "test:jest": "jest --coverage",
+    "test:watch": "jest --watch",
+    "e2e": "cypress run",
+    "e2e:open": "cypress open",
+    "e2e:component": "cypress open --component",
+    "test:all": "npm run test:jest && npm run e2e",
+    "lint": "ng lint",
+    "lint:fix": "ng lint --fix",
+    "format": "prettier --write \"src/**/*.{ts,html,scss}\""
   },
   "private": true,
   "dependencies": {
@@ -46,7 +53,14 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
-    "typescript": "~5.5.2"
+    "typescript": "~5.5.2",
+    "@testing-library/angular": "^15.0.0",
+    "@testing-library/jest-dom": "^6.1.4",
+    "@types/jest": "^29.5.7",
+    "cypress": "^13.5.0",
+    "jest": "^29.7.0",
+    "jest-preset-angular": "^14.1.0",
+    "ts-jest": "^29.1.1"
   },
   "engines": {
     "node": ">=18.0.0",
