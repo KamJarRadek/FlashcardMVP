@@ -5,14 +5,14 @@
   <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
     <mat-form-field appearance="outline" class="form-field">
       <mat-label>Adres e-mail</mat-label>
-      <input matInput formControlName="email" type="email" placeholder="np. jan.kowalski@example.com">
+      <input data-testid="login-email" matInput formControlName="email" type="email" placeholder="np. jan.kowalski@example.com">
       <mat-error *ngIf="loginForm.get('email')?.hasError('required')">Email jest wymagany</mat-error>
       <mat-error *ngIf="loginForm.get('email')?.hasError('email')">Podaj prawidłowy adres email</mat-error>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="form-field">
       <mat-label>Hasło</mat-label>
-      <input matInput formControlName="password" [type]="hidePassword ? 'password' : 'text'" placeholder="Wpisz swoje hasło">
+      <input data-testid="login-password" matInput formControlName="password" [type]="hidePassword ? 'password' : 'text'" placeholder="Wpisz swoje hasło">
       <button type="button" mat-icon-button matSuffix (click)="hidePassword = !hidePassword">
         <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
       </button>
@@ -24,7 +24,7 @@
       <a routerLink="/forgot-password">Nie pamiętasz hasła?</a>
     </div>
 
-    <button type="submit" mat-raised-button color="primary" class="submit-button" [disabled]="loginForm.invalid">
+    <button data-testid="login-button" type="submit" mat-raised-button color="primary" class="submit-button" [disabled]="loginForm.invalid">
       Zaloguj się
     </button>
 

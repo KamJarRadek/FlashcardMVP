@@ -9,7 +9,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test:karma": "ng test",
-    "test:jest": "jest --coverage --config=jest.config.ts",
+    "test:jest": "jest --coverage --config=jest.config.js",
     "test:watch": "jest --watch --config=jest.config.ts",
     "e2e": "cypress run",
     "e2e:open": "cypress open",
@@ -17,7 +17,8 @@
     "test:all": "npm run test:jest && npm run e2e",
     "lint": "ng lint",
     "lint:fix": "ng lint --fix",
-    "format": "prettier --write \"src/**/*.{ts,html,scss}\""
+    "format": "prettier --write \"src/**/*.{ts,html,scss}\"",
+    "test": "npm run test:jest"
   },
   "private": true,
   "dependencies": {

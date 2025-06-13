@@ -101,4 +101,14 @@ describe('LoginComponent', () => {
     expect(component.isLoading).toBe(false);
     expect(component.loginError).toBe(errorMsg);
   });
+
+  it('should handle login error and display error message', async () => {
+    authServiceMock.login.mockRejectedValue(new Error('Invalid credentials'));
+
+    component.loginForm.setValue({ email: 'test@example.com', password: 'wrongpassword' });
+    await component.onSubmit();
+
+    expect(component.loginError).toBe('Invalid credentials');
+    expect(authServiceMock.login).toHaveBeenCalledWith('test@example.com', 'wrongpassword');
+  });
 });

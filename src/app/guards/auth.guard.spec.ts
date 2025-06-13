@@ -1,30 +1,51 @@
+import { TestBed } from '@angular/core/testing';
+import { Router } from '@angular/router';
+import { of } from 'rxjs';
 import { authGuard } from './auth.guard';
 import { AuthService } from '../services/auth.service';
-import { of } from 'rxjs';
 
 describe('authGuard', () => {
-  it('should allow access when authenticated', (done) => {
-    const mockAuthService = { isAuthenticated$: of(true) };
-    const mockRouter = { navigate: jest.fn() };
+  let mockAuthService: any;
+  let mockRouter: any;
 
-    authGuard({} as any, {} as any, {
-      inject: (token: any) => token === AuthService ? mockAuthService : mockRouter
-    } as any).subscribe(result => {
-      expect(result).toBe(true);
-      done();
+  beforeEach(() => {
+    mockAuthService = { isAuthenticated$: of(true) };
+    mockRouter = { navigate: jest.fn() };
+
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: AuthService, useValue: mockAuthService },
+        { provide: Router, useValue: mockRouter }
+      ]
+    });
+  });
+
+  it('should allow access when authenticated', (done) => {
+    mockAuthService.isAuthenticated$ = of(true);
+
+    TestBed.runInInjectionContext(() => {
+      authGuard(null as any, null as any).subscribe({
+        next: (result) => {
+          expect(result).toBe(true);
+          done();
+        },
+        error: done.fail
+      });
     });
   });
 
   it('should redirect to /login when not authenticated', (done) => {
-    const mockAuthService = { isAuthenticated$: of(false) };
-    const mockRouter = { navigate: jest.fn() };
+    mockAuthService.isAuthenticated$ = of(false);
 
-    authGuard({} as any, {} as any, {
-      inject: (token: any) => token === AuthService ? mockAuthService : mockRouter
-    } as any).subscribe(result => {
-      expect(mockRouter.navigate).toHaveBeenCalledWith(['/login']);
-      expect(result).toBe(false);
-      done();
+    TestBed.runInInjectionContext(() => {
+      authGuard(null as any, null as any).subscribe({
+        next: (result) => {
+          expect(mockRouter.navigate).toHaveBeenCalledWith(['/login']);
+          expect(result).toBe(false);
+          done();
+        },
+        error: done.fail
+      });
     });
   });
 });

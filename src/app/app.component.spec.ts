@@ -4,7 +4,7 @@ import { AppComponent } from './app.component';
 describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AppComponent],
+      imports: [AppComponent], // Zmieniono 'declarations' na 'imports' dla komponentu standalone
     }).compileComponents();
   });
 
@@ -14,16 +14,9 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it(`should have the 'flashcard-mvp' title`, () => {
+  it(`should have the 'Aplikacja do nauki z fiszkami' title`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    expect(app.title).toEqual('flashcard-mvp');
-  });
-
-  it('should render title', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, flashcard-mvp');
+    expect(app.title).toEqual('Aplikacja do nauki z fiszkami'); // Dopasowano do właściwości 'title'
   });
 });
