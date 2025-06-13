@@ -32,8 +32,11 @@ export class AddFlashcardDialogComponent {
     if (this.addForm.valid) {
       const formValue = this.addForm.value;
       const newCard: Partial<Flashcard> = {
-        front: formValue.front as string,
-        back: formValue.back as string
+        concept: formValue.front as string,
+        definition: formValue.back as string,
+        user_id: '', // Wartość do uzupełnienia w innym miejscu
+        status: 'new',
+        source: 'manual'
       };
 
       this.dialogRef.close(newCard);

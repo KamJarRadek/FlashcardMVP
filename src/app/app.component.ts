@@ -1,16 +1,17 @@
-import { RouterOutlet } from '@angular/router';
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http';
-import { NavbarComponent } from './components/navbar/navbar.component';
-import { AuthService } from './services/auth.service';
-import { SupabaseService } from './services/supabase.service';
-import { Subscription } from 'rxjs';
+import {RouterOutlet} from '@angular/router';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {HttpClientModule} from '@angular/common/http';
+import {NavbarComponent} from './components/navbar/navbar.component';
+import {AuthService} from './services/auth.service';
+import {SupabaseService} from './services/supabase.service';
+import {Subscription} from 'rxjs';
+import {TextFormComponent} from './components/text-form/text-form.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, HttpClientModule, NavbarComponent],
+  imports: [CommonModule, RouterOutlet, HttpClientModule, NavbarComponent, TextFormComponent],
   providers: [SupabaseService],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
@@ -24,7 +25,8 @@ export class AppComponent implements OnInit, OnDestroy {
 
   constructor(
     private authService: AuthService
-  ) {}
+  ) {
+  }
 
   ngOnInit() {
     // Ustaw nasłuchiwanie na zmiany autentykacji z Supabase

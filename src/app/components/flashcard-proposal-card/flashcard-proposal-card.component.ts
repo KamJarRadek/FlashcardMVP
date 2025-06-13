@@ -30,18 +30,33 @@ export class FlashcardProposalCardComponent {
     dialogRef.afterClosed().subscribe((result: FlashCardModel | undefined) => {
         if (result) {
           Object.assign(this.card, result);
+          if (result.isProposal) {
+            this.flashcardsService.createFlashCardFromProposal(this.card).subscribe({
+              next: updatedFields => {
+                // Nałożenie tylko zmienionych pól na istniejącą kartę
 
-          this.flashcardsService.updateFlashcard(this.card).subscribe({
-            next: updatedFields => {
-              // Nałożenie tylko zmienionych pól na istniejącą kartę
+                // Object.assign(this.card, updatedFields);
+                this.notificationService.showSuccess('Flashcard został pomyślnie zaktualizowany.');
+              },
+              error: () => {
+                this.notificationService.showError('Wystąpił błąd podczas aktualizacji flashcarda.');
+              }
+            });
+          } else {
+            this.flashcardsService.updateFlashcard(this.card).subscribe({
+              next: updatedFields => {
+                // Nałożenie tylko zmienionych pól na istniejącą kartę
 
-              // Object.assign(this.card, updatedFields);
-              this.notificationService.showSuccess('Flashcard został pomyślnie zaktualizowany.');
-            },
-            error: () => {
-              this.notificationService.showError('Wystąpił błąd podczas aktualizacji flashcarda.');
-            }
-          });
+                // Object.assign(this.card, updatedFields);
+                this.notificationService.showSuccess('Flashcard został pomyślnie zaktualizowany.');
+              },
+              error: () => {
+                this.notificationService.showError('Wystąpił błąd podczas aktualizacji flashcarda.');
+              }
+            });
+          }
+
+
         }
       }
     );

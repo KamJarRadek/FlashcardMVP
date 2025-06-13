@@ -1,19 +1,21 @@
-const express = require('express');
-const path = require('path');
-const cors = require('cors');
-const rateLimit = require('express-rate-limit');
-require('dotenv').config();
+import express from 'express';
+import path from 'path';
+import cors from 'cors';
+import rateLimit from 'express-rate-limit';
+import dotenv from 'dotenv';
 
 // Import konfiguracji bazy danych
-testConnection = require('./server/config/database').testConnection;
+import { testConnection } from './server/config/database.js';
 // Import routerów API
-const flashcardRoutes = require('./server/routes/flashcard.routes');
+import flashcardRoutes from './server/routes/flashcard.routes.js';
+
+dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Konfiguracja limitera zapytań
-testConnection;
+testConnection();
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minut
   max: 100, // limit każdego IP do 100 zapytań na "okno"
@@ -22,40 +24,35 @@ const apiLimiter = rateLimit({
 });
 
 // Middleware
-env: cors({
-  origin: process.env.CORS_ORIGIN || 'http://localhost:4200',
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-});
 app.use(cors({
   origin: process.env.CORS_ORIGIN || 'http://localhost:4200',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 app.use(express.json());
-app.use(express.urlencoded({extended: true}));
+app.use(express.urlencoded({ extended: true }));
 app.use('/api', apiLimiter);
 
 // Statyczne pliki (produkcyjne i deweloperskie)
-app.use(express.static(path.join(__dirname, 'dist/flashcard-mvp')));
+app.use(express.static(path.join(path.resolve(), 'dist/flashcard-mvp')));
 
 // Endpointy API
 app.use('/api/flashcards', flashcardRoutes);
 
 // Endpoint statusu serwera
 app.get('/api/health', (req, res) => {
-  res.status(200).json({status: 'ok', message: 'Serwer działa poprawnie'});
+  res.status(200).json({ status: 'ok', message: 'Serwer działa poprawnie' });
 });
 
 // Wszystkie pozostałe zapytania obsługuje aplikacja Angular
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'dist/flashcard-mvp', 'index.html'));
+  res.sendFile(path.join(path.resolve(), 'dist/flashcard-mvp', 'index.html'));
 });
 
 // Obsługa błędów auth Handler
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).json({message: 'Wystąpił błąd na serwerze', error: err.message});
+  res.status(500).json({ message: 'Wystąpił błąd na serwerze', error: err.message });
 });
 
 // Uruchomienie serwera po weryfikacji połączenia z bazą danych
@@ -80,4 +77,3 @@ async function startServer() {
 }
 
 startServer();
-

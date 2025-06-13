@@ -7,6 +7,8 @@ import {NgIf} from "@angular/common";
 import {MatButton} from "@angular/material/button";
 import {FlashcardListComponent} from "../flashcard-list/flashcard-list.component";
 import {MatProgressSpinner} from "@angular/material/progress-spinner";
+import { Router } from '@angular/router';
+import {ProposalService} from "../../services/proposal.service";
 
 @Component({
   selector: 'app-text-form',
@@ -34,7 +36,7 @@ export class TextFormComponent {
   isLoading = false;
   errorMessage: string | null = null;
 
-  constructor(private aiService: AiService) {}
+  constructor(private aiService: AiService, private router: Router, private proposalService: ProposalService) {}
 
   onSubmit() {
     if (this.textControl.invalid) {
@@ -42,19 +44,22 @@ export class TextFormComponent {
     }
     this.isLoading = true;
     this.errorMessage = null;
-    const textInput = this.textControl.value;
-    this.aiService.generateFlashcards(textInput|| '')
-      .subscribe({
-        next: (response: any) => {
-          // Otrzymujemy mock dane i przypisujemy je do listy fiszek
-          this.flashcards = response.flashcards;
-          this.isLoading = false;
-        },
-        error: (error) => {
-          console.error('Błąd API AI', error);
-          this.errorMessage = 'Wystąpił błąd podczas komunikacji z API AI';
-          this.isLoading = false;
-        }
-      });
+
+    this.aiService.generateFlashcards(this.textControl.value || '').subscribe({
+      next: (response) => {
+        const proposals = (response.proposals || []).map((proposal: any) => ({
+          concept: proposal.front,
+          definition: proposal.back,
+          isProposal: true
+        })); // Przepakowanie danych z oznaczeniem isProposal
+        this.isLoading = false;
+        this.proposalService.setProposals(proposals);
+      },
+      error: (error) => {
+        this.errorMessage = 'Wystąpił błąd podczas generowania fiszek.';
+        console.error(error);
+        this.isLoading = false;
+      }
+    });
   }
 }

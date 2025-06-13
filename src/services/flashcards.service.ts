@@ -4,11 +4,15 @@ import {Observable, tap} from 'rxjs';
 import {environment} from '../environments/environment';
 import {FlashCardModel} from "../app/components/model/flash-card.model";
 import {map} from "rxjs/operators";
+import {AuthService} from "../app/services/auth.service";
 
 export interface Flashcard {
   id: number;
-  front: string;
-  back: string;
+  user_id: string;
+  concept: string;
+  definition: string;
+  status: string;
+  source: string;
 }
 
 @Injectable({
@@ -16,6 +20,7 @@ export interface Flashcard {
 })
 export class FlashcardsService {
   private readonly http = inject(HttpClient);
+  private readonly authService = inject(AuthService); // Assuming this is the correct service for auth
   private readonly apiUrl = `${environment.apiUrl}/flashcards`;
 
   // Signals
@@ -29,9 +34,7 @@ export class FlashcardsService {
   }
 
   public getUserFlashcards(userId: string): Observable<FlashCardModel[]> {
-    // TODO id wbite na sztywno
-    const user_id = '0709491b-c441-4924-bcf5-892a26bb998e';
-    return this.http.get<{ flashcards: FlashCardModel[] }>(`${this.apiUrl}/user/${user_id}`).pipe(
+    return this.http.get<{ flashcards: FlashCardModel[] }>(`${this.apiUrl}/user/${userId}`).pipe(
       map(resp => resp.flashcards),
       tap(cards => this.flashcardsSignal.set(cards))
     );
@@ -64,6 +67,34 @@ export class FlashcardsService {
     );
   }
 
+  public createFlashCardFromProposal(card: FlashCardModel): Observable<FlashCardModel> {
+    console.log('Updating card:', card.user_id);
+    const payload = {
+      user_id: this.authService.getCurrentUserId(),
+      concept: card.concept,
+      definition: card.definition,
+      status: 'accepted',
+      source: 'ai'
+    };
+    console.log('Payload:', payload);
+    return this.http.post<FlashCardModel>(
+      `${this.apiUrl}`,
+      payload
+    ).pipe(
+      tap(updatedCard => {
+        console.log('Card updated:', updatedCard);
+        // 3. Aktualizacja stanu lokalnego
+        const currentCards = this.flashcardsSignal();
+        const idx = currentCards.findIndex(c => c.id === updatedCard.id);
+        if (idx !== -1) {
+          const updatedCards = [...currentCards];
+          updatedCards[idx] = updatedCard;
+          this.flashcardsSignal.set(updatedCards);
+        }
+      })
+    );
+  }
+
   public createFlashcard(card: FlashCardModel): Observable<FlashCardModel> {
     return this.http.post<{ flashcard: FlashCardModel }>(this.apiUrl, card).pipe(
       map(response => response.flashcard),
@@ -76,3 +107,4 @@ export class FlashcardsService {
     );
   }
 }
+

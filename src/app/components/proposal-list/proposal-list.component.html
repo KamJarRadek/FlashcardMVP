@@ -2,9 +2,25 @@
   <button mat-raised-button color="accent" (click)="addFlashcard()">Dodaj Flashcard</button>
 </div>
 <div class="proposal-container">
-  @for (card of cards() ; track card.id) {
-    <app-flashcard-proposal-card [card]="card"></app-flashcard-proposal-card>
-  } @empty {
-    <div class="no-flashcards">Brak dostępnych flashcardów. Dodaj swój pierwszy!</div>
-  }
+  <ng-container *ngIf="(proposals$ | async) as proposals; else noProposals">
+    <ng-container *ngIf="proposals.length > 0; else noProposals">
+      <app-flashcard-proposal-card *ngFor="let proposal of proposals" [card]="proposal">
+<!--        <ng-container *ngIf="proposal.isProposal">-->
+<!--          <button mat-button color="primary" (click)="createFlashCardFromProposal(proposal)">Zapisz jako Flashcard</button>-->
+<!--        </ng-container>-->
+      </app-flashcard-proposal-card>
+    </ng-container>
+  </ng-container>
+  <ng-container *ngIf="cards(); else noProposals">
+    <ng-container *ngIf="cards().length > 0; else noProposals">
+      <app-flashcard-proposal-card *ngFor="let proposal of cards()" [card]="proposal">
+        <ng-container *ngIf="proposal.isProposal">
+          <button mat-button color="primary" (click)="saveAsFlashcard(proposal)">Edytuj Flashcard</button>
+        </ng-container>
+      </app-flashcard-proposal-card>
+    </ng-container>
+  </ng-container>
+  <ng-template #noProposals>
+    <div class="no-flashcards">Brak dostępnych propozycji fiszek. Dodaj swój pierwszy!</div>
+  </ng-template>
 </div>

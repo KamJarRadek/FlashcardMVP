@@ -5,4 +5,5 @@ export interface FlashCardModel{
   definition: string;
   status: string;
   source: string;
+  isProposal?: boolean;
 }

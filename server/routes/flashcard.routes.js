@@ -1,10 +1,15 @@
-const axios = require('axios');
+import OpenAI from "openai";
+import express from 'express';
+import {createClient} from '@supabase/supabase-js';
+import dotenv from 'dotenv';
+
+// const axios = require('axios');
 // const cors       = require('cors');
 // const bodyParser = require('body-parser');
-const express = require('express');
+
+dotenv.config();
+
 const router = express.Router();
-const {createClient} = require('@supabase/supabase-js');
-require('dotenv').config();
 
 // Konfiguracja klienta Supabase
 const supabase = createClient(
@@ -161,23 +166,56 @@ router.put('/:id', async (req, res) => {
 
 
 router.post('/generate-proposals-test', async (req, res) => {
-  const text = req.body.text; // maks. 10 000 znaków
   try {
-    const response = await axios.post(
-      'http://host.docker.internal:11434/v1/completions',
-      {
-        model: 'tinyllama:1.1b',
-        prompt: `Z tekstu poniżej wygeneruj maksymalnie 20 fiszek w formacie JSON:\n\n${text}`,
-        max_tokens: 512
-      },
-      {headers: {'Content-Type': 'application/json'}}
-    );
-    res.json(response.data.choices[0].text);
+    const {text} = req.body; // maks. 10 000 znaków
+    if (!text) {
+      return res.status(400).json({message: 'Brakujący parametr: text'});
+    }
+
+    // const openaiService = new OpenAIService();
+    const prompt = `Z tekstu poniżej wygeneruj maksymalnie 20 fiszek w formacie JSON:\n\n${text}`;
+    const messages = [{role: 'user', content: prompt}];
+
+    const response = await completion(messages, "gpt-4", false);
+    const result = response.choices[0].message.content;
+
+    // Parsowanie odpowiedzi, jeśli jest w formacie JSON
+    try {
+      const parsedResult = JSON.parse(result);
+      res.status(200).json({proposals: parsedResult});
+    } catch (parseError) {
+      console.warn('Nie udało się sparsować odpowiedzi jako JSON:', parseError.message);
+      res.status(200).json({rawResponse: result});
+    }
   } catch (err) {
-    console.error('Błąd kommunacji z Ollama:', err.message);
-    res.status(500).json({error: 'Błąd komunikacji z Ollama'});
+    console.error('Błąd komunikacji z OpenAI:', err.message);
+    res.status(500).json({error: 'Błąd komunikacji z OpenAI', details: err.message});
   }
 });
 
+export async function completion(
+  messages,
+  model = "gpt-4o-mini",
+  stream = false
+) {
+  const openai = new OpenAI({
+    apiKey: process.env['OPENAI_API_KEY'],
+  });
+  try {
+    console.log('🔍 Prompt debug (OpenAI):');
+    messages.forEach((m) => {
+      console.log(`> ${m.role.toUpperCase()}: ${m.content}`);
+    });
 
-module.exports = router;
+    return await openai.chat.completions.create({
+      messages,
+      model,
+      stream,
+    });
+  } catch (error) {
+    console.error("❌ Błąd w OpenAI completion:", error.response?.data || error.message);
+    throw new Error(error.response?.data?.error?.message || error.message || 'Nieznany błąd');
+  }
+}
+
+export default router;
