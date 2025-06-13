@@ -26,6 +26,15 @@ jobs:
       run: |
         npm install
 
+    - name: Debug npm scripts
+      run: |
+        echo "Available npm scripts:" && npm run
+
+    - name: Check Node.js and npm versions
+      run: |
+        node -v
+        npm -v
+
     - name: Run tests
       run: |
         npm test
